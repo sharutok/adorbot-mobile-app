@@ -3,8 +3,18 @@ import React from 'react'
 import { Colors } from '@/constants/Colors'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { router } from 'expo-router'
+import { useMMKVString } from 'react-native-mmkv'
 
 const BottomLogin = () => {
+  const [instanceId,setInstanceId]=useMMKVString('')
+  const [userId, setUserId] = useMMKVString('')
+
+  const handleLogin = () => {
+    setInstanceId('')
+    setUserId('0f1b40d8-31a0-4ac1-b824-ecc39e6e1b45')
+    router.navigate('/new')
+  }
+  
   function dismiss() {
     Keyboard.dismiss()
   }
@@ -23,7 +33,7 @@ const BottomLogin = () => {
       <View style={{marginHorizontal:20}}>
         <TextInput style={styles.inputField} autoCapitalize='none' placeholder='Email ID'/>
       <TextInput style={styles.inputField} autoCapitalize='none' placeholder='Password' secureTextEntry />
-        <TouchableOpacity style={styles.btn} onPress={() => router.navigate('/new')}>
+        <TouchableOpacity style={styles.btn} onPress={handleLogin}>
         <Text style={{color:'#FFFF',textAlign:'center'}}>Login</Text>
       </TouchableOpacity>
       </View>

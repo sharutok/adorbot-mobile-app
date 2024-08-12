@@ -1,19 +1,34 @@
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard, StyleSheet } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import MessageInput from '@/components/navigation/MessageInput'
 import PromptShortcut from '@/components/PromptShortcut'
 import WaterMarkLogo from '@/components/WaterMarkLogo'
 import QuestionTag from '@/components/QuestionTag'
 import AnswerTag from '@/components/AnswerTag'
+import axios from 'axios'
 
 const ChatPage = () => {
+const [currentChats,setCurrentChats]=useState([])
+  async function loadChats() {
+    try {
+      const res = await axios.get(`https://d49d-27-107-7-10.ngrok-free.app/conv/chats-by-id/20283e81-65be-4106-818f-f015bb67a10f/`);
+      setCurrentChats(res)
+    } catch (error) {
+      console.log("error in loading chat", error);
+    }
+  }
+
+  useEffect(()=>{
+    loadChats()
+  },[])
+
   return (
     <View style={{ flex: 1, backgroundColor: '#ffff' }}>
-     {true&& <ScrollView contentContainerStyle={{paddingBottom:50,paddingTop:10}} keyboardDismissMode='on-drag'>
-        {Array.from({ length: 1}).map((x,i) => (
+     {true&& <ScrollView contentContainerStyle={{paddingBottom:100,paddingTop:10}} keyboardDismissMode='on-drag'>
+        {currentChats?.data?.response?.map((x,i) => (
           <View id={i}>
-          <QuestionTag />
-          <AnswerTag/>
+            <QuestionTag question={x.questions} />
+            <AnswerTag ans={x.response} />
           </View>
         ))}
       </ScrollView>}

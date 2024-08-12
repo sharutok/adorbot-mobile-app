@@ -4,7 +4,7 @@ import { Colors } from '@/constants/Colors'
 import { Feather } from '@expo/vector-icons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import LoadingText from './navigation/LoadingText'
-const AnswerTag = () => {
+const AnswerTag = ({ ans }) => {
     return (
         <View style={{ flexDirection: 'row', width: 'auto',padding:5 }}>
             <Image
@@ -15,9 +15,7 @@ const AnswerTag = () => {
                 <LoadingText /> :    
             <View style={styles.questionField}>
                 <View>
-                    <Text>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non, nam cupiditate at, similique nobis labore
-                        ipsum dolor sit amet consectetur adipisicing elit. Non, nam cupiditate at, similique nobis labore
-                        laboriosam ipsam deserunt aperiam explicabo soluta numquam minima sed consequuntur sunt quia officiis, quos assumenda!
+                        <Text>{ans}
                     </Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 30, padding: 5 }}>
                         <TouchableOpacity>

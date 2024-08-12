@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Colors';
-import {Ionicons} from '@expo/vector-icons';
+import {Ionicons, MaterialIcons} from '@expo/vector-icons';
 import { DrawerContentScrollView, DrawerItem, DrawerItemList, useDrawerStatus } from '@react-navigation/drawer';
 import {FontAwesome} from '@expo/vector-icons'
 import { DrawerActions } from '@react-navigation/native';
@@ -48,28 +48,25 @@ export default function TabLayout() {
 const CustomDrawerContent = (props:any) => {
   const { top, bottom } = useSafeAreaInsets()
   const isDrawerOpen = useDrawerStatus() === 'open'
-  const [history, setHistory] = useState([])
   const router = useRouter() 
   
-  
-  function fetchPosts() {
-    return axios.get(api.history.chat_history_list_by_id);
-  }
+  const history = useQuery({
+    queryKey: ['todos'], queryFn: async () => {
+      const res= await axios.get(`https://d49d-27-107-7-10.ngrok-free.app/conv/history/20283e81-65be-4106-818f-f015bb67a10f/`);
+      return res
+    }
+  })
 
-  const { data, error, isLoading } = useQuery(['posts'], fetchPosts);
   
-  print(data)
 
   useEffect(() => {
     if (isDrawerOpen) {
-      loadChats()
+      // loadChats()
     }
     Keyboard.dismiss()
   }, [isDrawerOpen])
 
-  function loadChats() {
-    console.log('')
-  }
+  
 
   return (
     <View style={{ flex: 1, marginTop: top }}>
@@ -79,12 +76,15 @@ const CustomDrawerContent = (props:any) => {
       </View>
       <DrawerContentScrollView contentContainerStyle={{paddingTop:0}} {...props}>
         <DrawerItemList {...props} /> 
-        {Array.from({ length: 20}).map((x,y) =>
-          <DrawerItem key={y} label={"y"} onPress={()=>router.push(`/(drawer)/${x}`)}></DrawerItem>
+        {history?.data?.data?.response?.map((y) =>
+          <DrawerItem key={y?.instance_id} label={y?.questions} onPress={()=>router.push(`/(drawer)/${x}`)}></DrawerItem>
         ) }
       </DrawerContentScrollView>
-      <View style={{padding:16,paddingBottom:bottom}}>
-<Text>Version 1.0.0</Text>
+      <View style={{padding:16,paddingBottom:bottom,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+        <Text>Version 1.0.0</Text>
+        <TouchableOpacity onPress={() => { () => router.push('/index')  }}>
+          <MaterialIcons style={{ marginLeft: 20 }} name='logout' size={23} color={Colors.DARK_GREY} />
+        </TouchableOpacity>
       </View>
     </View>
   )
