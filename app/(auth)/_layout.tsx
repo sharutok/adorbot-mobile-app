@@ -9,12 +9,13 @@ import React, { useEffect, useState } from 'react';
 import { Keyboard, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery, useQueryClient, } from '@tanstack/react-query';
 import axios from 'axios';
 import { api } from '@/constants/Api';
 
 export default function TabLayout() {
-  const navigation=useNavigation()
+  const navigation = useNavigation()
+  
   return (
     <Drawer
       drawerContent={CustomDrawerContent}
@@ -45,23 +46,27 @@ export default function TabLayout() {
   )
 }
 
-const CustomDrawerContent = (props:any) => {
+const CustomDrawerContent = (props: any) => {
+  const queryClient = useQueryClient()
   const { top, bottom } = useSafeAreaInsets()
   const isDrawerOpen = useDrawerStatus() === 'open'
   const router = useRouter() 
   
   const history = useQuery({
     queryKey: ['todos'], queryFn: async () => {
-      const res= await axios.get(`https://d49d-27-107-7-10.ngrok-free.app/conv/history/20283e81-65be-4106-818f-f015bb67a10f/`);
+      const res= await axios.get(`https://d49d-27-107-7-10.ngrok-free.app/conv/history/20283e81-65be-4106-818f-f015bb67a10f`);
       return res
     }
   })
 
-  
+  async function reloadData() {
+    console.log("history list refreshed");
+    await queryClient.invalidateQueries({ queryKey: ['todos'] })
+  }
 
   useEffect(() => {
     if (isDrawerOpen) {
-      // loadChats()
+      reloadData()
     }
     Keyboard.dismiss()
   }, [isDrawerOpen])
@@ -77,14 +82,16 @@ const CustomDrawerContent = (props:any) => {
       <DrawerContentScrollView contentContainerStyle={{paddingTop:0}} {...props}>
         <DrawerItemList {...props} /> 
         {history?.data?.data?.response?.map((y) =>
-          <DrawerItem key={y?.instance_id} label={y?.questions} onPress={()=>router.push(`/(drawer)/${x}`)}></DrawerItem>
+          <DrawerItem key={y?.instance_id} label={y?.questions} onPress={()=>router.push(`/(drawer)/${y?.instance_id}`)}></DrawerItem>
         ) }
       </DrawerContentScrollView>
       <View style={{padding:16,paddingBottom:bottom,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
         <Text>Version 1.0.0</Text>
-        <TouchableOpacity onPress={() => { () => router.push('/index')  }}>
+         <Link href={"#"}>
+        <TouchableOpacity >
           <MaterialIcons style={{ marginLeft: 20 }} name='logout' size={23} color={Colors.DARK_GREY} />
         </TouchableOpacity>
+            </Link>
       </View>
     </View>
   )

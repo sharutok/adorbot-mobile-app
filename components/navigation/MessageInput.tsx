@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput } from 'react-native'
+import { View, Text, StyleSheet, TextInput,Keyboard } from 'react-native'
 import React, { useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Animated, { useSharedValue } from 'react-native-reanimated'
@@ -7,15 +7,18 @@ import { FontAwesome,Feather, MaterialCommunityIcons } from '@expo/vector-icons'
 import { Colors } from '@/constants/Colors'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import axios from 'axios'
+import { useLocalSearchParams } from 'expo-router'
+
 
 const ATouchableOpacity=Animated.createAnimatedComponent(TouchableOpacity)
 
-const MessageInput = () => {
+const MessageInput = ({ reloadData}) => {
   const [message, setMessage] = useState('')
   const { bottom } = useSafeAreaInsets()
   const expanded = useSharedValue(0)
   const [inputMessageText, setInputMessageText] = useState("")
-  
+  const searchParam = useLocalSearchParams()
+
   function handleMessageInput(text:string) {
     setInputMessageText(text);
   }
@@ -25,13 +28,15 @@ const MessageInput = () => {
 
   async function sendResponse(question:String) {
     try {
-      console.log("print");
-      const resposne=await axios.post("https://d49d-27-107-7-10.ngrok-free.app/conv/chats-by-id/20283e81-65be-4106-818f-f015bb67a10f/", {
-        user_id: "20283e81-65be-4106-818f-f015bb67a10f",
-        instance_id: "0f1b40d8-31a0-4ac1-b824-ecc39e6e1b45",
-        questions: question
+      const resposne = await axios.post(`https://d49d-27-107-7-10.ngrok-free.app/conv/generate-response/20283e81-65be-4106-818f-f015bb67a10f`, {
+        questions: question,
+        instance_id: searchParam?.id || ""
       })
-      console.log(resposne?.data);
+      Keyboard.dismiss()
+      if (resposne?.data?.status === 200) {
+        setInputMessageText("")
+        await reloadData()
+      }
     } catch (error) {
       console.log("error in sending response",error);
     }

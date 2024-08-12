@@ -4,21 +4,34 @@ import { Colors } from '@/constants/Colors'
 import { Feather } from '@expo/vector-icons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import LoadingText from './navigation/LoadingText'
+import * as Clipboard from 'expo-clipboard';
+
+
 const AnswerTag = ({ ans }) => {
+
+    async function copyToClipboard() {
+        try {
+            const text = await Clipboard.setStringAsync(ans);
+        } catch (error) {
+            console.log(error);
+            
+            console.log("error in copying");
+            
+        }
+    }
+
     return (
         <View style={{ flexDirection: 'row', width: 'auto',padding:5 }}>
             <Image
                 source={{ uri: 'https://adorwelding.org/Adorhub_uploads/PCM.png' }}
                 style={styles.image}
-            />
-            {false?
-                <LoadingText /> :    
+            /> 
             <View style={styles.questionField}>
                 <View>
                         <Text>{ans}
                     </Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 30, padding: 5 }}>
-                        <TouchableOpacity>
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 30, padding: 5, }}>
+                        <TouchableOpacity onPress={copyToClipboard}>
                             <Feather size={16} name='copy' />
                         </TouchableOpacity>
                         <TouchableOpacity>
@@ -27,8 +40,6 @@ const AnswerTag = ({ ans }) => {
                     </View>
                 </View>
             </View>
-            }
-            
         </View>
     )
 }
