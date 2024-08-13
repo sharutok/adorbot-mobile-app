@@ -1,45 +1,53 @@
-import { View, Text, StyleSheet, TextInput,Keyboard } from 'react-native'
-import React, { useState } from 'react'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Animated, { useSharedValue } from 'react-native-reanimated'
-import { BlurView } from 'expo-blur'
-import { FontAwesome,Feather, MaterialCommunityIcons } from '@expo/vector-icons'
 import { Colors } from '@/constants/Colors'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons'
 import axios from 'axios'
+import { BlurView } from 'expo-blur'
 import { useLocalSearchParams } from 'expo-router'
+import React, { useState } from 'react'
+import { Keyboard, StyleSheet, TextInput, View } from 'react-native'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import Animated, { useSharedValue } from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import LoadingText from './LoadingText'
 
 
 const ATouchableOpacity=Animated.createAnimatedComponent(TouchableOpacity)
 
 const MessageInput = ({ reloadData}) => {
-  const [message, setMessage] = useState('')
   const { bottom } = useSafeAreaInsets()
   const expanded = useSharedValue(0)
   const [inputMessageText, setInputMessageText] = useState("")
   const searchParam = useLocalSearchParams()
+  const [retriving,setRetriving]=useState(false)
 
   function handleMessageInput(text:string) {
     setInputMessageText(text);
   }
   function clearValues() {
+    console.log("called cleared value");
     setInputMessageText("")
   }
 
-  async function sendResponse(question:String) {
-    try {
+  async function sendResponse(question: String) {
+    console.log("called me??");
+    
+    if (question) {
+    try {    
+      Keyboard.dismiss()
+      setRetriving(true)
       const resposne = await axios.post(`https://d49d-27-107-7-10.ngrok-free.app/conv/generate-response/20283e81-65be-4106-818f-f015bb67a10f`, {
         questions: question,
         instance_id: searchParam?.id || ""
       })
-      Keyboard.dismiss()
       if (resposne?.data?.status === 200) {
-        setInputMessageText("")
+        setRetriving(false)
+        clearValues()
         await reloadData()
       }
     } catch (error) {
       console.log("error in sending response",error);
     }
+  }
   }
 
   return (
@@ -65,13 +73,14 @@ const MessageInput = ({ reloadData}) => {
             paddingVertical: 4,
         }}>
           <TextInput value={inputMessageText} onChangeText={handleMessageInput} style={{marginBottom:5,flex:1}} multiline autoCapitalize='none' placeholder='Message AdorBot....' />
-          <ATouchableOpacity onPress={() => clearValues()}>
+          {inputMessageText && <ATouchableOpacity onPress={() => clearValues()}>
             <MaterialCommunityIcons  name='close-circle-outline' size={22} color={Colors.DARK_GREY} />
-          </ATouchableOpacity>
+          </ATouchableOpacity>}
         </View>
-        <ATouchableOpacity onPress={() => sendResponse(inputMessageText)} style={{ ...styles.sendBtn }}>
+        {!retriving?<ATouchableOpacity disabled={!inputMessageText ? true:false} onPress={() => sendResponse(inputMessageText)} style={{ ...styles.sendBtn }}>
           <Feather name='arrow-up' size={18} color={Colors.DARK_GREY} />
-      </ATouchableOpacity>
+        </ATouchableOpacity> : <LoadingText />}
+       
             </View>
     </BlurView>
   )

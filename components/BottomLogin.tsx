@@ -1,8 +1,7 @@
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, Image, TextInput, TouchableOpacity, Keyboard } from 'react-native'
-import React from 'react'
 import { Colors } from '@/constants/Colors'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { router } from 'expo-router'
+import React from 'react'
+import { Image, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 // import { useMMKVString } from 'react-native-mmkv'
 
 const BottomLogin = () => {
@@ -15,9 +14,6 @@ const BottomLogin = () => {
     router.navigate('/new')
   }
   
-  function dismiss() {
-    Keyboard.dismiss()
-  }
   return (
     <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={1} style={styles.container}>
       <View style={{marginTop:200,marginBottom:40}}>

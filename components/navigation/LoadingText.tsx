@@ -4,7 +4,7 @@ import React from 'react'
 const LoadingText = () => {
   return (
       <View style={styles.questionField}>
-          <Image source={{ uri: 'https://adorwelding.org/Adorhub_uploads/icons8-dots-loading.gif' }} style={styles.image} />
+          <Image source={{ uri: 'https://adorwelding.org/Adorhub_uploads/Animation - 1722496482079.gif' }} style={styles.image} />
     </View>
   )
 }
@@ -12,17 +12,14 @@ const LoadingText = () => {
 const styles = StyleSheet.create({
     questionField: {
         alignItems: 'center',
-        marginHorizontal:10,
-        // backgroundColor: Colors.ACCENT_COLOR,
+        // marginHorizontal:10,
         flexDirection: 'row',
-        marginRight: 40,
-        alignContent: 'flex-start',
-        justifyContent: 'flex-start',
+        alignContent: 'flex-end',
+        justifyContent: 'flex-end',
     },
     image: {
-        width: 20,
-        height: 20,
-        backgroundColor:'red'
+        width: 50,
+        height: 50,
     },
 })
 export default LoadingText

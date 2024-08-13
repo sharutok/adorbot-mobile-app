@@ -1,17 +1,15 @@
 import { Colors } from '@/constants/Colors';
-import {Ionicons, MaterialIcons} from '@expo/vector-icons';
+import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { DrawerContentScrollView, DrawerItem, DrawerItemList, useDrawerStatus } from '@react-navigation/drawer';
-import {FontAwesome} from '@expo/vector-icons'
 import { DrawerActions } from '@react-navigation/native';
-import { Link, Stack, Tabs, useNavigation, useRouter } from 'expo-router';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { Link, useNavigation, useRouter } from 'expo-router';
 import Drawer from 'expo-router/drawer';
-import React, { useEffect, useState } from 'react';
-import { Keyboard, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useQueries, useQuery, useQueryClient, } from '@tanstack/react-query';
-import axios from 'axios';
-import { api } from '@/constants/Api';
 
 export default function TabLayout() {
   const navigation = useNavigation()
@@ -20,7 +18,8 @@ export default function TabLayout() {
     <Drawer
       drawerContent={CustomDrawerContent}
       screenOptions={{
-        title:"Chat",
+        title: "Chat",
+        drawerLabel: 'New Chat',
       headerLeft: () => (
         <TouchableOpacity onPress={()=>{navigation.dispatch(DrawerActions.toggleDrawer)}}>
           <Ionicons style={{ marginLeft: 20 }} name='menu-outline' size={32} color={Colors.DARK_GREY} />
@@ -80,7 +79,7 @@ const CustomDrawerContent = (props: any) => {
       <TextInput  autoCapitalize='none' placeholder='Search' />
       </View>
       <DrawerContentScrollView contentContainerStyle={{paddingTop:0}} {...props}>
-        <DrawerItemList {...props} /> 
+        {/* <DrawerItemList {...props} />  */}
         {history?.data?.data?.response?.map((y) =>
           <DrawerItem key={y?.instance_id} label={y?.questions} onPress={()=>router.push(`/(drawer)/${y?.instance_id}`)}></DrawerItem>
         ) }

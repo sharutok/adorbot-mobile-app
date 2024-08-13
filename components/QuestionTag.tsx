@@ -1,11 +1,12 @@
 import { View, Text, StyleSheet, Image } from 'react-native'
 import React from 'react'
+import { Colors } from '@/constants/Colors'
 
 const QuestionTag = ({ question }) => {
     return (
         <View>
-            <View style={styles.awnserField}>
-                <Text style={{ fontWeight: '500' }}>
+            <View style={[styles.awnserField, {  }]}>
+                <Text style={{ fontWeight: '500', }}>
                     {question}
                 </Text>
             </View>
@@ -19,10 +20,13 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 25,
         borderBottomLeftRadius: 25,
         flexDirection: 'row',
-        margin: 10,
+        alignSelf: 'flex-end',
+        marginRight: 10,
         padding: 10,
+        marginLeft: 40,
         alignContent: 'flex-end',
         justifyContent: 'flex-end',
+        backgroundColor: Colors.LIGHT_GREY,
     },
     image: {
         width: 50,

@@ -27,7 +27,7 @@ const AnswerTag = ({ ans }) => {
                 style={styles.image}
             /> 
             <View style={styles.questionField}>
-                <View>
+                {true?<View>
                         <Text>{ans}
                     </Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 30, padding: 5, }}>
@@ -38,7 +38,8 @@ const AnswerTag = ({ ans }) => {
                             <Feather size={16} name='thumbs-down' />
                         </TouchableOpacity>
                     </View>
-                </View>
+                </View>:
+                <LoadingText/>}
             </View>
         </View>
     )

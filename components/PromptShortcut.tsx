@@ -1,24 +1,34 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
 import React from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Colors } from '@/constants/Colors'
 
 const PromptShortcut = () => {
-    const PredefinedMessages = ["what products are approved by LRS", "features of superbond ss","What are the recommended storage conditions for Casten electrodes"]
+    const PredefinedMessages = ["What products are approved by LRS", "Features of superbond ss","What are the recommended storage conditions for Casten electrodes"]
   return (
-      <View>
-          <View >
-              {PredefinedMessages.map((x) => (
+      <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+          style={{ flex: 1 }}>
+          <View
+              style={{ alignItems: 'center' }}>
+              {PredefinedMessages?.map((x,i) => (
                   <TouchableOpacity style={{
                       padding: 10,
-                      margin: 10, borderRadius: 10,
-                      backgroundColor: "#FFF",marginHorizontal:44
+                      margin: 10,
+                      borderRadius: 10,
+                      borderColor:Colors.MEDIUM_GREY,
+                      borderWidth: 1,
+                      backgroundColor: "#FFF",
+                      width:Dimensions.get('window').width-50,
                   }}>
-                      <Text style={{color:Colors.DARK_GREY}}>{x}</Text>
+                      <View>
+                      <Text key={i} style={{color:Colors.DARK_GREY}}>{x}</Text>
+                      </View>
                   </TouchableOpacity>
               ))}
           </View>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 
