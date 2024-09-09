@@ -27,8 +27,8 @@ const BottomLogin = () => {
       </View>
         </View>
       <View style={{marginHorizontal:20}}>
-        <TextInput style={styles.inputField} autoCapitalize='none' placeholder='Email ID'/>
-      <TextInput style={styles.inputField} autoCapitalize='none' placeholder='Password' secureTextEntry />
+        <TextInput style={styles.inputField} autoCapitalize='none' placeholder='Email ID' value='itpune@adorians.com'/>
+      <TextInput style={styles.inputField} autoCapitalize='none' placeholder='Password' secureTextEntry value='ador@123'/>
         <TouchableOpacity style={styles.btn} onPress={handleLogin}>
         <Text style={{color:'#FFFF',textAlign:'center'}}>Login</Text>
       </TouchableOpacity>

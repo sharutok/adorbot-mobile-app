@@ -6,9 +6,11 @@ import WaterMarkLogo from '@/components/WaterMarkLogo'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { useLocalSearchParams } from 'expo-router'
-import React, { useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import LoadingText from './navigation/LoadingText'
+import { useDispatch, useSelector } from 'react-redux'
+import { setChatList } from '@/redux/actions'
 const windowHeight = Dimensions.get('window').height;
 
 
@@ -16,14 +18,19 @@ const ChatPage = () => {
   const queryClient = useQueryClient()
   const current_chart_data=useQuery({queryKey:['get-current-chats'],queryFn:loadChats})  
   const searchParam = useLocalSearchParams()
-  const [chatList, setChatList] = useState([])
-  const [height,setHeight]=useState(0)
+  
+  const [height, setHeight] = useState(0)
+
+
+  const chatList = useSelector((state: any) => state.chatList);
+  const dispatch = useDispatch();
   
   async function loadChats() {
     try {
-      const res = await axios.post(`https://d49d-27-107-7-10.ngrok-free.app/conv/chats-by-id/20283e81-65be-4106-818f-f015bb67a10f`, { instance_id: searchParam });
-      setChatList(res)
-      return res
+      const res = await axios.post(`https://d9a3-182-73-197-158.ngrok-free.app/conv/chats-by-id/20283e81-65be-4106-818f-f015bb67a10f`, { instance_id: searchParam });
+      // setChatList(res || [])
+      dispatch(setChatList([])) 
+      return res||[]
     } catch (error) {
       console.log("error in loading chat", error);
     }
@@ -34,6 +41,7 @@ const ChatPage = () => {
     await queryClient.invalidateQueries({ queryKey: ['get-current-chats']})
   }
   const scrollViewRef = useRef();
+  
 
   return (
     <View style={{ flex: 1, backgroundColor: '#ffff' }}>
@@ -59,12 +67,7 @@ const ChatPage = () => {
       <TouchableWithoutFeedback>
       <KeyboardAvoidingView
         keyboardVerticalOffset={70}
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          width: '100%'
-        }}
+        style={{position: 'absolute',bottom: 0,left: 0,width: '100%'}}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <MessageInput reloadData={reloadData}  />
         </KeyboardAvoidingView>

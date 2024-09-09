@@ -27,6 +27,8 @@ export const Colors = {
     MEDIUM_GREY: "#9E9E9E",
     LIGHT_GREY: "#F6F6F6",
   ACCENT_COLOR: "#E3DFF2",
+  LIGHT_ACCENT_COLOR: "#FAF9FE",
+  
   RED: "#ED1C24",
   GREY: "#555259"
 };

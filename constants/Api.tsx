@@ -1,6 +1,6 @@
 const url = process.env.EXPO_PUBLIC_BACKEND_URL
 const port = process.env.EXPO_PUBLIC_BACKEND_PORT
-const endpoints = `${url}:${port}` && ' https://d49d-27-107-7-10.ngrok-free.app'
+const endpoints = `${url}:${port}` && ' https://d9a3-182-73-197-158.ngrok-free.app'
 export const api = {
     conversations: {
         get_chats_by_id: `${endpoints}/chats-by-id` ,

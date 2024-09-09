@@ -1,10 +1,21 @@
 import { View, Text, TouchableOpacity, Dimensions, KeyboardAvoidingView, Platform } from 'react-native'
-import React from 'react'
+import React, { useContext } from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Colors } from '@/constants/Colors'
+import { useDispatch, useSelector } from 'react-redux'
+import { setInputMessageText } from '@/redux/actions'
 
 const PromptShortcut = () => {
-    const PredefinedMessages = ["What products are approved by LRS", "Features of superbond ss","What are the recommended storage conditions for Casten electrodes"]
+    const PredefinedMessages = ["What products are approved by LRS", "Features of superbond ss", "What are the recommended storage conditions for Casten electrodes"]
+
+    const dispatch = useDispatch();
+
+
+    function handleClickPrompt(x: any) {
+        dispatch(setInputMessageText(x))
+        setInputMessageText(x)
+    }
+    
   return (
       <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -13,11 +24,14 @@ const PromptShortcut = () => {
           <View
               style={{ alignItems: 'center' }}>
               {PredefinedMessages?.map((x,i) => (
-                  <TouchableOpacity style={{
+                  <TouchableOpacity
+                      key={i}
+                      onPress={()=>handleClickPrompt(x)}
+                  style={{
                       padding: 10,
                       margin: 10,
                       borderRadius: 10,
-                      borderColor:Colors.MEDIUM_GREY,
+                      borderColor: Colors.MEDIUM_GREY,
                       borderWidth: 1,
                       backgroundColor: "#FFF",
                       width:Dimensions.get('window').width-50,

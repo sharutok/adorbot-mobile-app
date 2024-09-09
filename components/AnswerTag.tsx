@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image } from 'react-native'
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native'
 import React from 'react'
 import { Colors } from '@/constants/Colors'
 import { Feather } from '@expo/vector-icons'
@@ -50,12 +50,12 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 25,
         borderTopRightRadius: 25,
         borderBottomRightRadius: 25,
-        backgroundColor: Colors.ACCENT_COLOR,
+        backgroundColor: Colors.LIGHT_ACCENT_COLOR,
         flexDirection: 'row',
         margin: 10,
-        marginRight: 40,
         padding: 10,
         alignContent: 'flex-start',
+        marginRight: Dimensions.get('screen').width - 320,
         justifyContent: 'flex-start',
     },
     image: {

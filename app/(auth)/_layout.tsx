@@ -6,14 +6,24 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Link, useNavigation, useRouter } from 'expo-router';
 import Drawer from 'expo-router/drawer';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useDispatch, useSelector } from 'react-redux';
+import { setChatList } from '@/redux/actions';
 
 export default function TabLayout() {
   const navigation = useNavigation()
   
+  const chatList = useSelector((state:any) => state.chatList);
+  const dispatch = useDispatch();
+
+
+  function NewChat() {
+    console.log("not required");
+    dispatch(setChatList([])) 
+  }
   return (
     <Drawer
       drawerContent={CustomDrawerContent}
@@ -21,10 +31,19 @@ export default function TabLayout() {
         title: "Chat",
         drawerLabel: 'New Chat',
       headerLeft: () => (
-        <TouchableOpacity onPress={()=>{navigation.dispatch(DrawerActions.toggleDrawer)}}>
+        <TouchableOpacity onPress={() => {
+          navigation.dispatch(DrawerActions.toggleDrawer)
+        }}>
           <Ionicons style={{ marginLeft: 20 }} name='menu-outline' size={32} color={Colors.DARK_GREY} />
         </TouchableOpacity>
-      ),
+        ),
+        headerRight: () => (
+          <TouchableOpacity onPress={() => {!chatList.length && NewChat() }}>
+              <Ionicons style={{ marginRight: 20 }} name='document-text-outline' size={24} color={Colors.DARK_GREY} />
+            </TouchableOpacity>
+          //     <Link href={"#"}>
+          // </Link>
+        ),
       drawerActiveBackgroundColor: Colors.LIGHT_GREY ,
       drawerActiveTintColor: Colors.DARK_GREY,
     }} >
@@ -37,8 +56,7 @@ export default function TabLayout() {
               <TouchableOpacity>
                 <Ionicons style={{ marginRight: 20 }} name='document-text-outline' size={24} color={Colors.DARK_GREY}/>
             </TouchableOpacity>
-            </Link>
-         )
+            </Link>)
        }}
       />
   </Drawer>
@@ -53,7 +71,7 @@ const CustomDrawerContent = (props: any) => {
   
   const history = useQuery({
     queryKey: ['todos'], queryFn: async () => {
-      const res= await axios.get(`https://d49d-27-107-7-10.ngrok-free.app/conv/history/20283e81-65be-4106-818f-f015bb67a10f`);
+      const res= await axios.get(`https://d9a3-182-73-197-158.ngrok-free.app/conv/history/20283e81-65be-4106-818f-f015bb67a10f`);
       return res
     }
   })
