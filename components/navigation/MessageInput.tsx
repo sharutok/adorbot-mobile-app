@@ -4,7 +4,7 @@ import axios from 'axios'
 import { BlurView } from 'expo-blur'
 import { useLocalSearchParams } from 'expo-router'
 import React, { useContext, useState } from 'react'
-import { Keyboard, StyleSheet, TextInput, View } from 'react-native'
+import { Keyboard, Platform, StyleSheet, TextInput, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Animated, { useSharedValue } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -12,6 +12,9 @@ import LoadingText from './LoadingText'
 import { router } from 'expo-router'
 import { setInputMessageText } from '@/redux/actions'
 import { useDispatch, useSelector } from 'react-redux'
+import { api } from '@/constants/Api'
+import { useMMKVString } from 'react-native-mmkv'
+import { Storage } from '@/utils/Storage'
 
 
 const ATouchableOpacity=Animated.createAnimatedComponent(TouchableOpacity)
@@ -19,18 +22,22 @@ const ATouchableOpacity=Animated.createAnimatedComponent(TouchableOpacity)
 const MessageInput = ({ reloadData}) => {
   const { bottom } = useSafeAreaInsets()
   const expanded = useSharedValue(0)
-  const inputMessageText = useSelector((state:any) => state.inputMessageText);
+  const inputMessageText = useSelector((state: any) => state.inputMessageText);
+  const dispatch = useDispatch()
+  
+  const [instanceId, setInstanceId] = useMMKVString('instance_id', Storage)
+  const [userId, setUserId] = useMMKVString('user_id', Storage)
   
   const searchParam = useLocalSearchParams()
   const [retriving, setRetriving] = useState(false)
   
 
   function handleMessageInput(text:string) {
-    useDispatch(setInputMessageText(text));
+    dispatch(setInputMessageText(text));
   }
   function clearValues() {
     console.log("called cleared value");
-    useDispatch(setInputMessageText(""))
+    dispatch(setInputMessageText(""))
   }
 
   async function sendResponse(question: String) {
@@ -40,7 +47,13 @@ const MessageInput = ({ reloadData}) => {
     try {    
       Keyboard.dismiss()
       setRetriving(true)
-      const resposne = await axios.post(`https://d9a3-182-73-197-158.ngrok-free.app/conv/generate-response/20283e81-65be-4106-818f-f015bb67a10f`, {
+      console.log({instanceId ,userId});
+      
+      if (!instanceId && !userId) {
+        console.log("no instanceId or userId");
+        return 
+      }
+      const resposne = await axios.post(`${api.conversations.generate_responses}/${userId}`, {
         questions: question,
         instance_id: searchParam?.id || ""
       })
@@ -48,9 +61,6 @@ const MessageInput = ({ reloadData}) => {
         setRetriving(false)
         router.setParams({ instance_id: resposne?.data?.response?.instance_id })
         router.push(`/(drawer)/${resposne?.data?.response?.instance_id}`)
-        console.log(resposne?.data?.response?.instance_id);
-        
-        // !searchParam?.id && router.setParams({ instance_id:resposne?.data?.})
         clearValues()
         await reloadData()
       }
@@ -68,6 +78,8 @@ const MessageInput = ({ reloadData}) => {
         alignItems: 'center',
         marginTop:20,
         marginHorizontal: 10,
+
+        marginBottom:Platform.OS==="android" ?20:0
 }}>
         <View style={{
           alignItems: 'center',
@@ -81,9 +93,9 @@ const MessageInput = ({ reloadData}) => {
           paddingHorizontal: 10,
           alignContent:'center',alignSelf:'center',
           paddingLeft: 20,
-            paddingVertical: 4,
+          paddingVertical: 4,
         }}>
-          <TextInput value={inputMessageText} onChangeText={handleMessageInput} style={{marginBottom:5,alignContent:'center',alignSelf:'center',flex:1,fontSize:16}} multiline autoCapitalize='none' placeholder='Message AdorBot....' />
+          <TextInput value={inputMessageText} onChangeText={handleMessageInput} style={{marginBottom:5,alignContent:'center',alignSelf:'center',flex:1,fontSize:16,marginTop:4}} multiline autoCapitalize='none' placeholder='Message AdorBot....' />
           {inputMessageText && <ATouchableOpacity onPress={() => clearValues()}>
             <MaterialCommunityIcons  name='close-circle-outline' size={22} color={Colors.DARK_GREY} />
           </ATouchableOpacity>}

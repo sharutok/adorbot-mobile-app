@@ -8,7 +8,7 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/Ador_Welding_logo_STAR.PNG",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

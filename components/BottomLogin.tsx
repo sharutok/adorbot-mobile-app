@@ -1,16 +1,17 @@
 import { Colors } from '@/constants/Colors'
+import { Storage } from '@/utils/Storage'
 import { router } from 'expo-router'
 import React from 'react'
 import { Image, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-// import { useMMKVString } from 'react-native-mmkv'
+import { useMMKVString } from 'react-native-mmkv'
 
 const BottomLogin = () => {
-  // const [instanceId,setInstanceId]=useMMKVString('')
-  // const [userId, setUserId] = useMMKVString('')
+  const [instanceId,setInstanceId]=useMMKVString('instance_id',Storage)
+  const [userId, setUserId] = useMMKVString('user_id',Storage)
 
   const handleLogin = () => {
-    // setInstanceId('')
-    // setUserId('0f1b40d8-31a0-4ac1-b824-ecc39e6e1b45')
+    setInstanceId('')
+    setUserId('20283e81-65be-4106-818f-f015bb67a10f')
     router.navigate('/new')
   }
   

@@ -44,7 +44,7 @@ export default function RootLayout() {
     GeistMonoUltraLight:require('../assets/fonts/GeistMono-UltraLight.ttf'),
 
 
-  });
+  }); 
 
   useEffect(() => {
     if (loaded) {
@@ -57,18 +57,18 @@ export default function RootLayout() {
   }
 
   return (
-            <Provider store={store}>
     <ThemeProvider value={DefaultTheme}>
       <QueryClientProvider client={queryClient}>
           <GestureHandlerRootView >
+      <Provider store={store}>
       <Stack>
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="index" options={{ headerShown: false }} />
           {/* <Stack.Screen name='chatPlayground' options={{ headerShown: false}} /> */}
           </Stack>
+            </Provider>
       </GestureHandlerRootView>
         </QueryClientProvider>
     </ThemeProvider>
-            </Provider>
   );
 }

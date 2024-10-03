@@ -5,7 +5,7 @@ import { Colors } from '@/constants/Colors'
 const QuestionTag = ({ question }) => {
     return (
         <View>
-            <View style={[styles.awnserField, {  }]}>
+            <View style={[styles.awnserField]}>
                 <Text style={{ fontWeight: '500'}}>
                     {question}
                 </Text>

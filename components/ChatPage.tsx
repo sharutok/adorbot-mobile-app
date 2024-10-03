@@ -11,15 +11,20 @@ import { Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Tou
 import LoadingText from './navigation/LoadingText'
 import { useDispatch, useSelector } from 'react-redux'
 import { setChatList } from '@/redux/actions'
+import { api } from '@/constants/Api'
+import { useMMKVString } from 'react-native-mmkv'
+import { Storage } from '@/utils/Storage'
 const windowHeight = Dimensions.get('window').height;
 
 
 const ChatPage = () => {
+  const [instanceId, setInstanceId] = useMMKVString('instance_id', Storage)
+  const [userId, setUserId] = useMMKVString('user_id', Storage)
+
   const queryClient = useQueryClient()
-  const current_chart_data=useQuery({queryKey:['get-current-chats'],queryFn:loadChats})  
+  useQuery({queryKey:['get-current-chats'],queryFn:loadChats})  
   const searchParam = useLocalSearchParams()
   
-  const [height, setHeight] = useState(0)
 
 
   const chatList = useSelector((state: any) => state.chatList);
@@ -27,25 +32,32 @@ const ChatPage = () => {
   
   async function loadChats() {
     try {
-      const res = await axios.post(`https://d9a3-182-73-197-158.ngrok-free.app/conv/chats-by-id/20283e81-65be-4106-818f-f015bb67a10f`, { instance_id: searchParam });
-      // setChatList(res || [])
-      dispatch(setChatList([])) 
-      return res||[]
+      setInstanceId(searchParam['id'])
+      const res = await axios.post(`${api.conversations.get_chats_by_id}/${userId}`, { instance_id: searchParam['id'] });
+      console.log(res?.data?.response?.data?.length || []);
+      dispatch(setChatList(res?.data?.response?.data || []))
+      return true
     } catch (error) {
       console.log("error in loading chat", error);
+      return false
     }
   }
 
   const reloadData = async () => {
-    console.log("called reloadData");
-    await queryClient.invalidateQueries({ queryKey: ['get-current-chats']})
+    try {
+      console.log("called reloadData");
+      await queryClient.invalidateQueries({ queryKey: ['get-current-chats']})
+      
+    } catch (error) {
+      console.log("error in reloading data");
+      
+    }
   }
   const scrollViewRef = useRef();
   
-
   return (
     <View style={{ flex: 1, backgroundColor: '#ffff' }}>
-      {!current_chart_data?.data?.data?.response?.length  ?
+      {!chatList?.length  ?
         <View style={{ flex: 1 }}  >
           <View style={[styles.container,{marginTop:windowHeight/10,marginBottom:20}]}>
           <WaterMarkLogo/>
@@ -56,14 +68,14 @@ const ChatPage = () => {
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd()}
         ref={scrollViewRef}
         contentContainerStyle={{ paddingBottom: 100, paddingTop: 10 }} keyboardDismissMode='on-drag'>
-        {/* {current_chart_data?.data?.data?.response?.map((x,i) => ( */}
-          {chatList?.data?.response?.map((x,i) => (
-          <View key={i} style={{marginTop:30}} >
+          {chatList?.map((x, i) => (
+            <View key={i} style={{ marginTop: 30 }} >
             <QuestionTag question={x.questions} />
               <AnswerTag ans={x.response} />
           </View>
         ))}
-      </ScrollView>}
+        </ScrollView>
+      }
       <TouchableWithoutFeedback>
       <KeyboardAvoidingView
         keyboardVerticalOffset={70}

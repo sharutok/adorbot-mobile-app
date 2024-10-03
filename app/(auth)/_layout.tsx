@@ -7,13 +7,18 @@ import axios from 'axios';
 import { Link, useNavigation, useRouter } from 'expo-router';
 import Drawer from 'expo-router/drawer';
 import React, { useContext, useEffect } from 'react';
-import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Keyboard, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { setChatList } from '@/redux/actions';
+import { api } from '@/constants/Api';
+import { useMMKVString } from 'react-native-mmkv';
+import { Storage } from '@/utils/Storage';
 
 export default function TabLayout() {
+  
+
   const navigation = useNavigation()
   
   const chatList = useSelector((state:any) => state.chatList);
@@ -38,7 +43,9 @@ export default function TabLayout() {
         </TouchableOpacity>
         ),
         headerRight: () => (
-          <TouchableOpacity onPress={() => {!chatList.length && NewChat() }}>
+          <TouchableOpacity onPress={() => {
+            chatList.length && NewChat()
+          }}>
               <Ionicons style={{ marginRight: 20 }} name='document-text-outline' size={24} color={Colors.DARK_GREY} />
             </TouchableOpacity>
           //     <Link href={"#"}>
@@ -68,16 +75,18 @@ const CustomDrawerContent = (props: any) => {
   const { top, bottom } = useSafeAreaInsets()
   const isDrawerOpen = useDrawerStatus() === 'open'
   const router = useRouter() 
+  const [instanceId, setInstanceId] = useMMKVString('instance_id', Storage)
+  const [userId, setUserId] = useMMKVString('user_id', Storage)
   
   const history = useQuery({
     queryKey: ['todos'], queryFn: async () => {
-      const res= await axios.get(`https://d9a3-182-73-197-158.ngrok-free.app/conv/history/20283e81-65be-4106-818f-f015bb67a10f`);
+      const res = await axios.get(`${api.history.chat_history_list_by_id}/${userId}`);
       return res
     }
   })
 
   async function reloadData() {
-    console.log("history list refreshed");
+    console.log("history list refreshed");;
     await queryClient.invalidateQueries({ queryKey: ['todos'] })
   }
 
@@ -102,7 +111,7 @@ const CustomDrawerContent = (props: any) => {
           <DrawerItem key={y?.instance_id} label={y?.questions} onPress={()=>router.push(`/(drawer)/${y?.instance_id}`)}></DrawerItem>
         ) }
       </DrawerContentScrollView>
-      <View style={{padding:16,paddingBottom:bottom,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+      <View style={{padding:16,paddingBottom:Platform.OS==="ios"? bottom:bottom+20,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
         <Text>Version 1.0.0</Text>
          <Link href={"#"}>
         <TouchableOpacity >

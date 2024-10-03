@@ -13,7 +13,6 @@ const PromptShortcut = () => {
 
     function handleClickPrompt(x: any) {
         dispatch(setInputMessageText(x))
-        setInputMessageText(x)
     }
     
   return (

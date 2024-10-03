@@ -1,0 +1,1 @@
+run development build->npx expo run:android
