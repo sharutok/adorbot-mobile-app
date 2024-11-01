@@ -47,9 +47,9 @@ const MessageInput = ({ reloadData}) => {
     try {    
       Keyboard.dismiss()
       setRetriving(true)
-      console.log({instanceId ,userId});
+      console.log({ instanceId, userId, searchParam_id:searchParam?.id });
       
-      if (!instanceId && !userId) {
+      if (!userId) {
         console.log("no instanceId or userId");
         return 
       }
@@ -59,7 +59,13 @@ const MessageInput = ({ reloadData}) => {
       })
       if (resposne?.data?.status === 200) {
         setRetriving(false)
+
         router.setParams({ instance_id: resposne?.data?.response?.instance_id })
+        setInstanceId(resposne?.data?.response?.instance_id)
+        router.setParams({ id: "" })
+        console.log("check if its instance_id", resposne?.data?.response);
+        
+        
         router.push(`/(drawer)/${resposne?.data?.response?.instance_id}`)
         clearValues()
         await reloadData()
@@ -95,7 +101,13 @@ const MessageInput = ({ reloadData}) => {
           paddingLeft: 20,
           paddingVertical: 4,
         }}>
-          <TextInput value={inputMessageText} onChangeText={handleMessageInput} style={{marginBottom:5,alignContent:'center',alignSelf:'center',flex:1,fontSize:16,marginTop:4}} multiline autoCapitalize='none' placeholder='Message AdorBot....' />
+          <TextInput value={inputMessageText} onChangeText={handleMessageInput}
+            style={{
+            marginBottom: 5, alignContent: 'center',
+            alignSelf: 'center', flex: 1, fontSize: 16, marginTop: 4
+          }}
+            multiline autoCapitalize='none'
+            placeholder='Message AdorBot....' />
           {inputMessageText && <ATouchableOpacity onPress={() => clearValues()}>
             <MaterialCommunityIcons  name='close-circle-outline' size={22} color={Colors.DARK_GREY} />
           </ATouchableOpacity>}

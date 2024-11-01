@@ -1,14 +1,17 @@
 {
   "expo": {
-    "name": "mobile_app",
-    "slug": "mobile_app",
+    "developmentClient": {
+      "disableMenuGesture": true
+    },
+    "name": "Adorbot",
+    "slug": "Adorbot",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/Ador_Welding_logo_STAR.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/Ador_Welding_logo_STAR.PNG",
+      "image": "./assets/images/Ador_Welding_logo_STAR.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/Ador_Welding_logo_STAR.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.adorbot_app"
@@ -32,6 +35,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c075057e-c2c5-4bca-ae59-e2bae8415c23"
+      }
     }
   }
 }

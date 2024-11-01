@@ -4,7 +4,7 @@ import { DrawerContentScrollView, DrawerItem, DrawerItemList, useDrawerStatus } 
 import { DrawerActions } from '@react-navigation/native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { Link, useNavigation, useRouter } from 'expo-router';
+import { Link, router, useNavigation, useRouter } from 'expo-router';
 import Drawer from 'expo-router/drawer';
 import React, { useContext, useEffect } from 'react';
 import { Keyboard, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -20,13 +20,16 @@ export default function TabLayout() {
   
 
   const navigation = useNavigation()
-  
+  const [instanceId, setInstanceId] = useMMKVString('instance_id', Storage)
+  const [userId, setUserId] = useMMKVString('user_id', Storage)
+
   const chatList = useSelector((state:any) => state.chatList);
   const dispatch = useDispatch();
 
 
   function NewChat() {
-    console.log("not required");
+    setInstanceId("")
+    router.setParams({ id: "" })
     dispatch(setChatList([])) 
   }
   return (
@@ -86,8 +89,14 @@ const CustomDrawerContent = (props: any) => {
   })
 
   async function reloadData() {
-    console.log("history list refreshed");;
+    console.log("history list refreshed");
     await queryClient.invalidateQueries({ queryKey: ['todos'] })
+  }
+
+  function logOut() {
+    setInstanceId("")
+    setUserId("")
+
   }
 
   useEffect(() => {
@@ -97,7 +106,14 @@ const CustomDrawerContent = (props: any) => {
     Keyboard.dismiss()
   }, [isDrawerOpen])
 
-  
+  function onNavigateInstance(y: any) {
+    try {
+      console.log("onNavigateInstance",y?.instance_id);
+      router.navigate(`/(drawer)/${y?.instance_id}`)
+    } catch (error) {
+      console.log(error,"error in onNavigateInstance");
+    }
+  }
 
   return (
     <View style={{ flex: 1, marginTop: top }}>
@@ -107,14 +123,16 @@ const CustomDrawerContent = (props: any) => {
       </View>
       <DrawerContentScrollView contentContainerStyle={{paddingTop:0}} {...props}>
         {/* <DrawerItemList {...props} />  */}
-        {history?.data?.data?.response?.map((y) =>
-          <DrawerItem key={y?.instance_id} label={y?.questions} onPress={()=>router.push(`/(drawer)/${y?.instance_id}`)}></DrawerItem>
+        {history?.data?.data?.response?.map((y:any) =>
+          <DrawerItem key={y?.instance_id} label={y?.questions} onPress={
+            () =>onNavigateInstance(y)
+          }></DrawerItem>
         ) }
       </DrawerContentScrollView>
       <View style={{padding:16,paddingBottom:Platform.OS==="ios"? bottom:bottom+20,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
         <Text>Version 1.0.0</Text>
          <Link href={"#"}>
-        <TouchableOpacity >
+        <TouchableOpacity onPress={()=>logOut()}>
           <MaterialIcons style={{ marginLeft: 20 }} name='logout' size={23} color={Colors.DARK_GREY} />
         </TouchableOpacity>
             </Link>

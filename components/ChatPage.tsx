@@ -6,7 +6,7 @@ import WaterMarkLogo from '@/components/WaterMarkLogo'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { useLocalSearchParams } from 'expo-router'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import LoadingText from './navigation/LoadingText'
 import { useDispatch, useSelector } from 'react-redux'
@@ -21,8 +21,8 @@ const ChatPage = () => {
   const [instanceId, setInstanceId] = useMMKVString('instance_id', Storage)
   const [userId, setUserId] = useMMKVString('user_id', Storage)
 
-  const queryClient = useQueryClient()
-  useQuery({queryKey:['get-current-chats'],queryFn:loadChats})  
+  // const queryClient = useQueryClient()
+  // useQuery({queryKey:['get-current-chats'],queryFn:loadChats})  
   const searchParam = useLocalSearchParams()
   
 
@@ -32,6 +32,7 @@ const ChatPage = () => {
   
   async function loadChats() {
     try {
+      console.log("loading chat....");
       setInstanceId(searchParam['id'])
       const res = await axios.post(`${api.conversations.get_chats_by_id}/${userId}`, { instance_id: searchParam['id'] });
       console.log(res?.data?.response?.data?.length || []);
@@ -46,13 +47,19 @@ const ChatPage = () => {
   const reloadData = async () => {
     try {
       console.log("called reloadData");
-      await queryClient.invalidateQueries({ queryKey: ['get-current-chats']})
+      // await queryClient.invalidateQueries({ queryKey: ['get-current-chats']})
+      loadChats()
       
     } catch (error) {
       console.log("error in reloading data");
       
     }
   }
+
+
+  useEffect(() => {
+    loadChats()
+  },[])
   const scrollViewRef = useRef();
   
   return (

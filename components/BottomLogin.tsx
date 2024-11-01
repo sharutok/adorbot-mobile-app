@@ -1,18 +1,58 @@
+import { api } from '@/constants/Api'
 import { Colors } from '@/constants/Colors'
 import { Storage } from '@/utils/Storage'
+import axios from 'axios'
 import { router } from 'expo-router'
-import React from 'react'
+import React, { useState } from 'react'
 import { Image, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { useMMKVString } from 'react-native-mmkv'
 
 const BottomLogin = () => {
+  const [adorHubUserId, setAdorHubUserId]=useState("")
+  const [adorHubPassword, setAdorHubPassword] = useState("")
+  const [loginBtn, setLoginBtn] = useState({
+    state: false,
+    message:"Login"
+  })
+  const [loginError, setLoginError] = useState({
+    state: false,
+    message:"Incorrect credentials"
+  })
+  
   const [instanceId,setInstanceId]=useMMKVString('instance_id',Storage)
   const [userId, setUserId] = useMMKVString('user_id',Storage)
 
-  const handleLogin = () => {
-    setInstanceId('')
-    setUserId('20283e81-65be-4106-818f-f015bb67a10f')
-    router.navigate('/new')
+  const handleLogin =async () => {
+    try {
+      if (adorHubPassword || adorHubUserId) {
+        setInstanceId('')
+        const response=await axios.post(api.conversations.user_validation, {
+        "email": adorHubUserId,
+          "password": adorHubPassword,
+      })
+      
+      if (response?.data?.status===200) {
+        setUserId(response?.data?.emp_id)
+        console.log(response?.data?.emp_id);
+        
+        setAdorHubUserId("")
+        setAdorHubPassword("")
+        setLoginBtn({state:true,message:"Logging in....."})
+        if (loginError.state===true){setLoginError({...loginError,message:"",state:false})}
+        setTimeout(() => {
+          setLoginBtn({state:false,message:"Login"})
+          router.navigate('/new')
+        },2000)
+      }
+      else {
+        setLoginError({...loginError,state:true})
+        console.log("incorrect username and passsword");
+      }
+    }
+    } catch (error) {
+      setLoginError({...loginError,state:true})
+      console.log("error in logging in");
+    }
   }
   
   return (
@@ -28,14 +68,13 @@ const BottomLogin = () => {
       </View>
         </View>
       <View style={{marginHorizontal:20}}>
-        <TextInput style={styles.inputField} autoCapitalize='none' placeholder='Email ID' value='itpune@adorians.com'/>
-      <TextInput style={styles.inputField} autoCapitalize='none' placeholder='Password' secureTextEntry value='ador@123'/>
-        <TouchableOpacity style={styles.btn} onPress={handleLogin}>
-        <Text style={{color:'#FFFF',textAlign:'center'}}>Login</Text>
+        <TextInput style={{...styles.inputField,borderColor:loginError.state?Colors.RED:"#FFFF",borderWidth:1}}  autoCapitalize='none' onChangeText={(text)=>setAdorHubUserId(text)} placeholder='@adorians.com' defaultValue={adorHubUserId} />
+        <TextInput style={{...styles.inputField,borderColor:loginError.state?Colors.RED:"#FFFF",borderWidth:1}}  autoCapitalize='none' onChangeText={(text)=>setAdorHubPassword(text)} placeholder='Password' secureTextEntry defaultValue={adorHubPassword}/>
+          {loginError.state &&<Text  style={{color:Colors.RED,fontWeight:"500"}}>{ loginError.message}</Text>}
+        <TouchableOpacity disabled={loginBtn.state} style={{...styles.btn}} onPress={handleLogin}>
+          <Text style={{ color: '#FFFF', textAlign: 'center' }}>{ loginBtn.message}</Text>
       </TouchableOpacity>
       </View>
-      {/* <TouchableWithoutFeedback onPress={dismiss}>
-        </TouchableWithoutFeedback> */}
     </KeyboardAvoidingView>
   )
 }
