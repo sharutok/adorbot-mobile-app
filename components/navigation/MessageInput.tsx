@@ -19,7 +19,7 @@ import { Storage } from '@/utils/Storage'
 
 const ATouchableOpacity=Animated.createAnimatedComponent(TouchableOpacity)
 
-const MessageInput = ({ reloadData}) => {
+const MessageInput = ({ reloadData, chatList }) => {
   const { bottom } = useSafeAreaInsets()
   const expanded = useSharedValue(0)
   const inputMessageText = useSelector((state: any) => state.inputMessageText);
@@ -35,6 +35,7 @@ const MessageInput = ({ reloadData}) => {
   function handleMessageInput(text:string) {
     dispatch(setInputMessageText(text));
   }
+  
   function clearValues() {
     console.log("called cleared value");
     dispatch(setInputMessageText(""))
@@ -47,7 +48,6 @@ const MessageInput = ({ reloadData}) => {
     try {    
       Keyboard.dismiss()
       setRetriving(true)
-      console.log({ instanceId, userId, searchParam_id:searchParam?.id });
       
       if (!userId) {
         console.log("no instanceId or userId");
@@ -59,16 +59,10 @@ const MessageInput = ({ reloadData}) => {
       })
       if (resposne?.data?.status === 200) {
         setRetriving(false)
-
-        router.setParams({ instance_id: resposne?.data?.response?.instance_id })
         setInstanceId(resposne?.data?.response?.instance_id)
-        router.setParams({ id: "" })
-        console.log("check if its instance_id", resposne?.data?.response);
-        
-        
-        router.push(`/(drawer)/${resposne?.data?.response?.instance_id}`)
+        router.navigate(`/(drawer)/${resposne?.data?.response?.instance_id}`)
         clearValues()
-        await reloadData()
+        chatList.length >=1 && await reloadData()
       }
     } catch (error) {
       console.log("error in sending response",error);
@@ -103,7 +97,7 @@ const MessageInput = ({ reloadData}) => {
         }}>
           <TextInput value={inputMessageText} onChangeText={handleMessageInput}
             style={{
-            marginBottom: 5, alignContent: 'center',
+            marginBottom: 2, alignContent: 'center',
             alignSelf: 'center', flex: 1, fontSize: 16, marginTop: 4
           }}
             multiline autoCapitalize='none'

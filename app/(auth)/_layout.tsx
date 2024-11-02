@@ -32,6 +32,7 @@ export default function TabLayout() {
     router.setParams({ id: "" })
     dispatch(setChatList([])) 
   }
+
   return (
     <Drawer
       drawerContent={CustomDrawerContent}

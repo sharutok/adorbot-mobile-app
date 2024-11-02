@@ -5,7 +5,7 @@ import QuestionTag from '@/components/QuestionTag'
 import WaterMarkLogo from '@/components/WaterMarkLogo'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Dimensions, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import LoadingText from './navigation/LoadingText'
@@ -34,6 +34,7 @@ const ChatPage = () => {
     try {
       console.log("loading chat....");
       setInstanceId(searchParam['id'])
+      router.setParams({ id: searchParam['id'] })
       const res = await axios.post(`${api.conversations.get_chats_by_id}/${userId}`, { instance_id: searchParam['id'] });
       console.log(res?.data?.response?.data?.length || []);
       dispatch(setChatList(res?.data?.response?.data || []))
@@ -88,7 +89,7 @@ const ChatPage = () => {
         keyboardVerticalOffset={70}
         style={{position: 'absolute',bottom: 0,left: 0,width: '100%'}}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-          <MessageInput reloadData={reloadData}  />
+          <MessageInput chatList={chatList} reloadData={reloadData}  />
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     </View>
