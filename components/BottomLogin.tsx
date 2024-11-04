@@ -26,6 +26,8 @@ const BottomLogin = () => {
     try {
       if (adorHubPassword || adorHubUserId) {
         setInstanceId('')
+        console.log(api.conversations.user_validation);
+        
         const response=await axios.post(api.conversations.user_validation, {
         "email": adorHubUserId,
           "password": adorHubPassword,
@@ -51,7 +53,7 @@ const BottomLogin = () => {
     }
     } catch (error) {
       setLoginError({...loginError,state:true})
-      console.log("error in logging in");
+      console.log("error in logging in",error);
     }
   }
   
