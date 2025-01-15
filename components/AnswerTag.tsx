@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, Image, Dimensions, Linking } from 'react-native'
 import React from 'react'
 import { Colors } from '@/constants/Colors'
 import { Feather } from '@expo/vector-icons'
@@ -9,12 +9,32 @@ import * as Clipboard from 'expo-clipboard';
 
 const AnswerTag = ({ ans }) => {
 
+    const renderTextWithLinks = (text) => {
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const parts = text.split(urlRegex);
+        
+
+        return parts.map((part, index) =>
+            urlRegex.test(part) ? (
+                <Text
+                    key={index}
+                    style={styles.link}
+                    onPress={() => Linking.openURL(part.replaceAll("(", "").replace(")", ""))}
+                >
+                    {part}
+                </Text>
+            ) : (
+                <Text key={index}>{part}</Text>
+            )
+        );
+    };
+
+
     async function copyToClipboard() {
         try {
             const text = await Clipboard.setStringAsync(ans);
         } catch (error) {
             console.log(error);
-            
             console.log("error in copying");
             
         }
@@ -28,7 +48,7 @@ const AnswerTag = ({ ans }) => {
             /> 
             <View style={styles.questionField}>
                 {true?<View>
-                        <Text>{ans}
+                    <Text>{renderTextWithLinks(ans)}
                     </Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 30, padding: 5, }}>
                         <TouchableOpacity onPress={copyToClipboard}>
@@ -62,5 +82,11 @@ const styles = StyleSheet.create({
         width: 30,
         height: 30,
     },
+    link: {
+        color: 'blue',
+        textDecorationLine: 'underline',
+    },
 })
 export default AnswerTag
+
+

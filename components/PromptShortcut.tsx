@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import { Colors } from '@/constants/Colors'
 import { useDispatch, useSelector } from 'react-redux'
 import { setInputMessageText } from '@/redux/actions'
+import SkeletonLoader from './SkeletonLoader'
 
 const PromptShortcut = () => {
     const PredefinedMessages = ["What products are approved by LRS", "Features of superbond ss", "What are the recommended storage conditions for Casten electrodes"]

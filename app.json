@@ -10,11 +10,6 @@
     "icon": "./assets/images/Ador_Welding_logo_STAR.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/Ador_Welding_logo_STAR.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true
     },
@@ -27,7 +22,7 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "static", 
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
